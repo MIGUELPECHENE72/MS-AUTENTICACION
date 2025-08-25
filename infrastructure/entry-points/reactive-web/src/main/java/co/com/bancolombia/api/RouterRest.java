@@ -12,9 +12,9 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 public class RouterRest {
     @Bean
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
-        return route(GET("/api/v1/usuario/{id}"), handler::listenGetPersonaById)
-                .andRoute(POST("/api/v1/usuario"), handler::listenSavePersona)
-                .andRoute(PUT("/api/v1/usuario"), handler::listenUpdatePersona)
+        return route(GET("/api/v1/usuarios/{id}"), handler::listenGetPersonaById)
+                .andRoute(POST("/api/v1/usuarios"), handler::listenSavePersona)
+                .andRoute(PUT("/api/v1/usuarios"), handler::listenUpdatePersona)
                 .and(route(GET("/api/v1/usuarios"), handler::listenGetAllPersonas));
     }
 }
