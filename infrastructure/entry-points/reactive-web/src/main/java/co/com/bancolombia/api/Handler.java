@@ -5,7 +5,6 @@ import co.com.bancolombia.api.dto.EditPersonaDTO;
 import co.com.bancolombia.api.dto.PersonaDTO;
 import co.com.bancolombia.api.mapper.PersonaDTOMapper;
 import co.com.bancolombia.api.util.RequestValidator;
-import co.com.bancolombia.model.persona.Persona;
 import co.com.bancolombia.usecase.persona.PersonaUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -13,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
 
 @Log4j2
@@ -25,6 +25,8 @@ public class Handler {
     private final PersonaDTOMapper personaDTOMapper;
 
     private final RequestValidator requestValidator;
+
+    private final TransactionalOperator transactionalOperator;
 
     public Mono<ServerResponse> listenGetPersonaById(ServerRequest serverRequest) {
 
@@ -50,23 +52,16 @@ public class Handler {
                 .doOnSubscribe(subscription -> log.info("******Inicia llamado a crear persona"))
                 .flatMap(createPersonaDTO ->
                         requestValidator.validadorPersona(createPersonaDTO)
-                                .flatMap(validatedDTO -> {
-                                    Persona persona = personaDTOMapper.toModel(validatedDTO);
-                                    return personaUseCase.create(persona);
-                                })
-                                .flatMap(savedPersona -> {
-                                    PersonaDTO personaDTO = personaDTOMapper.toResponse(savedPersona);
-                                    return ServerResponse.ok()
+                                .flatMap(validatedDTO -> personaUseCase.create(
+                                        personaDTOMapper.toModel(validatedDTO))
+                                        .transform(transactionalOperator::transactional)
+                                )
+                                .flatMap(savedPersona -> ServerResponse.ok()
                                             .contentType(MediaType.APPLICATION_JSON)
-                                            .bodyValue(personaDTO);
-                                })
+                                            .bodyValue(personaDTOMapper.toResponse(savedPersona))
+                                )
                 )
-                .onErrorResume(e -> {
-                    log.error("*****Ha ocurrido un error de validación: {}", e.getMessage(), e);
-                    return ServerResponse.badRequest()
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .bodyValue("Error de validación: " + e.getMessage());
-                })
+                .onErrorResume(this::handleError)
                 .doOnTerminate(() -> log.info("*****Finalizó el proceso de creación de la persona."));
     }
 
@@ -75,23 +70,24 @@ public class Handler {
                 .doOnSubscribe(subscription -> log.info("******Inicia llamado a actualizar persona"))
                 .flatMap(createPersonaDTO ->
                         requestValidator.validadorPersona(createPersonaDTO)
-                                .flatMap(editPersonaDTO -> {
-                                    Persona persona = personaDTOMapper.toModel(editPersonaDTO);
-                                    return personaUseCase.update(persona);
-                                })
-                                .flatMap(savedPersona -> {
-                                    PersonaDTO personaDTO = personaDTOMapper.toResponse(savedPersona);
-                                    return ServerResponse.ok()
+                                .flatMap(editPersonaDTO -> personaUseCase.update(
+                                        personaDTOMapper.toModel(editPersonaDTO))
+                                        .transform(transactionalOperator::transactional)
+                                )
+                                .flatMap(savedPersona -> ServerResponse.ok()
                                             .contentType(MediaType.APPLICATION_JSON)
-                                            .bodyValue(personaDTO);
-                                })
+                                            .bodyValue(personaDTOMapper.toResponse(savedPersona))
+                                )
                 )
-                .onErrorResume(e -> {
-                    log.error("*****Ha ocurrido un error de validación: {}", e.getMessage(), e);
-                    return ServerResponse.badRequest()
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .bodyValue("Error de validación: " + e.getMessage());
-                })
+                .onErrorResume(this::handleError)
                 .doOnTerminate(() -> log.info("*****Finalizó el proceso de actualización de la persona."));
+    }
+
+    // Método centralizado para manejar errores
+    private Mono<ServerResponse> handleError(Throwable e) {
+        log.error("*****Ha ocurrido un error de validación: {}", e.getMessage(), e);
+        return ServerResponse.badRequest()
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue("Error de validación: " + e.getMessage());
     }
 }
