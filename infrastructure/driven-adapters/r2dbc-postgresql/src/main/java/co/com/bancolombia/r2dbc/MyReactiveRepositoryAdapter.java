@@ -6,6 +6,7 @@ import co.com.bancolombia.r2dbc.entity.PersonaEntity;
 import co.com.bancolombia.r2dbc.helper.ReactiveAdapterOperations;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Mono;
 
 @Repository
 public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
@@ -23,4 +24,8 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
         super(repository, mapper, d -> mapper.map(d, Persona.class));
     }
 
+    @Override
+    public Mono<Boolean> existsByCorreoElectronico(String correoElectronico) {
+        return repository.existsByCorreoElectronico(correoElectronico);
+    }
 }

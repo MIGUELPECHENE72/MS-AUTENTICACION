@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -31,6 +32,6 @@ public class PersonaEntity {
 
     private String correoElectronico;
 
-    private Long salarioBase;
+    private BigDecimal salarioBase;
 
 }

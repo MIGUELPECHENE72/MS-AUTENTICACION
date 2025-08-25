@@ -1,0 +1,114 @@
+{
+	"info": {
+		"_postman_id": "a88b6b58-2493-414c-8bc1-8138a54bc8ac",
+		"name": "Autenticacion (crediya)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24909186"
+	},
+	"item": [
+		{
+			"name": "Persona",
+			"item": [
+				{
+					"name": "getById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/v1/usuario/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"usuario",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombres\": \"ISAURA\",\n    \"apellidos\": \"PECHENE\",\n    \"fechaNacimiento\": \"1960-04-24\",\n    \"direccion\": \"CARRERA 10A # 2 - 73\",\n    \"telefono\": \"3023011903\",\n    \"correoElectronico\": \"miguelpechene69@gmail.com\",\n    \"salarioBase\": 1450000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/usuario",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"usuario"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 2,\n    \"nombres\": \"JUAN MIGUEL\",\n    \"apellidos\": \"PEREZ PECHENE\",\n    \"fechaNacimiento\": \"1984-10-20\",\n    \"direccion\": \"CARRERA 10A # 2 - 73\",\n    \"telefono\": \"3023011901\",\n    \"correoElectronico\": \"miguelpechene71@gmail.com\",\n    \"salarioBase\": 2100000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/usuario",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"usuario"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/v1/usuarios",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"usuarios"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

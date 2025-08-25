@@ -2,6 +2,7 @@ package co.com.bancolombia.model.persona;
 import lombok.*;
 //import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -25,6 +26,6 @@ public class Persona {
 
     private String correoElectronico;
 
-    private Long salarioBase;
+    private BigDecimal salarioBase;
 
 }

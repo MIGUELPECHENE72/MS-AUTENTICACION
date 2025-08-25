@@ -11,7 +11,17 @@ public class PersonaUseCase {
 
     private final PersonaRepository personaRepository;
 
-    public Mono<Persona> save(Persona persona){
+    public Mono<Persona> create(Persona persona) {
+        return personaRepository.existsByCorreoElectronico(persona.getCorreoElectronico())
+                .flatMap(exist -> {
+                    if (exist) {
+                        return Mono.error(new IllegalArgumentException("El correo electrónico ya está registrado"));
+                    }
+                    return personaRepository.save(persona);
+                });
+    }
+
+    public Mono<Persona> update(Persona persona) {
         return personaRepository.save(persona);
     }
 
