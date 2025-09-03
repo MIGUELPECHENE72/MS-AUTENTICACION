@@ -3,6 +3,7 @@ package co.com.bancolombia.api;
 import co.com.bancolombia.api.dto.CreatePersonaDTO;
 import co.com.bancolombia.api.dto.EditPersonaDTO;
 import co.com.bancolombia.api.dto.PersonaDTO;
+import co.com.bancolombia.api.util.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -24,6 +25,7 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 
 @Configuration
 public class RouterRest {
+
     @Bean
     @RouterOperations({
             @RouterOperation(
@@ -64,13 +66,84 @@ public class RouterRest {
                                                                 "direccion": "PT MADERO",
                                                                 "telefono": "3023011900",
                                                                 "correoElectronico": "miguelpechene72@gmail.com",
-                                                                "salarioBase": 5500000
+                                                                "salarioBase": 5500000,
+                                                                "idTipoDocumento": 1,
+                                                                "identificacion": "1007779304",
+                                                                "idRol": 1
                                                             }
                                                             """
                                                     )
                                             )
                                     ),
                                     @ApiResponse(responseCode = "404", description = "Solicitud no encontrada")
+                            }
+                    )
+            ),
+            @RouterOperation(
+                    path = "/api/v1/usuarios/identificacion/{identificacion}",
+                    produces = { "application/json" },
+                    method = RequestMethod.GET,
+                    beanClass = Handler.class,
+                    beanMethod = "listenGetPersonaByIdentificacion",
+                    operation = @Operation(
+                            operationId = "getPersonaByIdentificacion",
+                            summary = "Obtener una Persona por identificación",
+                            tags = { "usuarios" },
+                            parameters = {
+                                    @Parameter(
+                                            name = "identificacion",
+                                            description = "identificación de la persona",
+                                            required = true,
+                                            in = ParameterIn.PATH,
+                                            example = "1007779304"
+                                    )
+                            },
+                            responses = {
+                                    @ApiResponse(
+                                            responseCode = "200",
+                                            description = "Solicitud exitosa",
+                                            content = @Content(
+                                                    mediaType = "application/json",
+                                                    schema = @Schema(implementation = PersonaDTO.class),
+                                                    examples = @ExampleObject(
+                                                            name = "Ejemplo de respuesta",
+                                                            summary = "Solicitud válida",
+                                                            value = """
+                                                            {
+                                                                "id": 1,
+                                                                "nombres": "MIGUEL ANGEL",
+                                                                "apellidos": "PECHENE PECHENE",
+                                                                "fechaNacimiento": "2000-05-17",
+                                                                "direccion": "PT MADERO",
+                                                                "telefono": "3023011900",
+                                                                "correoElectronico": "miguelpechene72@gmail.com",
+                                                                "salarioBase": 5500000,
+                                                                "idTipoDocumento": 1,
+                                                                "identificacion": "1007779304",
+                                                                "idRol": 1
+                                                            }
+                                                            """
+                                                    )
+                                            )
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "404",
+                                            description = "Solicitud no encontrada",
+                                            content = @Content(
+                                                mediaType = "application/json",
+                                                schema = @Schema(implementation = ErrorResponse.class),
+                                                examples = @ExampleObject(
+                                                name = "Ejemplo de respuesta",
+                                                        summary = "Solicitud válida",
+                                                        value = """
+                                                            {
+                                                                "errorCode": "Not Found",
+                                                                "message": "No se encontraron personas con la identificación: 1007779302"
+                                                            }
+                                                        """
+                                                    )
+                                            )
+                                    )
                             }
                     )
             ),
@@ -167,7 +240,10 @@ public class RouterRest {
                                                                     "direccion": "PT MADERO",
                                                                     "telefono": "3023011900",
                                                                     "correoElectronico": "miguelpechene72@gmail.com",
-                                                                    "salarioBase": 5500000
+                                                                    "salarioBase": 5500000,
+                                                                    "idTipoDocumento": 1,
+                                                                    "identificacion": "1007779304",
+                                                                    "idRol": 1
                                                                 },
                                                                 {
                                                                     "id": 2,
@@ -177,7 +253,10 @@ public class RouterRest {
                                                                     "direccion": "CARRERA 10A # 2 - 73",
                                                                     "telefono": "3023011901",
                                                                     "correoElectronico": "miguelpechene71@gmail.com",
-                                                                    "salarioBase": 2100000
+                                                                    "salarioBase": 2100000,
+                                                                    "idTipoDocumento": 1,
+                                                                    "identificacion": "1007779304",
+                                                                    "idRol": 1
                                                                 }
                                                             ]
                                                             """
@@ -214,7 +293,10 @@ public class RouterRest {
                                                         "direccion": "CARRERA 10A # 2 - 73",
                                                         "telefono": "3023011901",
                                                         "correoElectronico": "miguelpechene71@gmail.com",
-                                                        "salarioBase": 2100000
+                                                        "salarioBase": 2100000,
+                                                        "idTipoDocumento": 1,
+                                                        "identificacion": "1007779304",
+                                                        "idRol": 1
                                                     }
                                                     """
                                             )
@@ -239,7 +321,10 @@ public class RouterRest {
                                                                 "direccion": "CARRERA 10A # 2 - 73",
                                                                 "telefono": "3023011901",
                                                                 "correoElectronico": "miguelpechene71@gmail.com",
-                                                                "salarioBase": 2100000
+                                                                "salarioBase": 2100000,
+                                                                "idTipoDocumento": 1,
+                                                                "identificacion": "1007779304",
+                                                                "idRol": 1
                                                             }
                                                             """
                                                     )
@@ -277,7 +362,10 @@ public class RouterRest {
                                                         "direccion": "CARRERA 10A # 2 - 73",
                                                         "telefono": "3023011901",
                                                         "correoElectronico": "miguelpechene71@gmail.com",
-                                                        "salarioBase": 2100000
+                                                        "salarioBase": 2100000,
+                                                        "idTipoDocumento": 1,
+                                                        "identificacion": "1007779304",
+                                                        "idRol": 1
                                                     }
                                                     """
                                             )
@@ -302,7 +390,10 @@ public class RouterRest {
                                                                 "direccion": "CARRERA 10A # 2 - 73",
                                                                 "telefono": "3023011901",
                                                                 "correoElectronico": "miguelpechene71@gmail.com",
-                                                                "salarioBase": 2100000
+                                                                "salarioBase": 2100000,
+                                                                "idTipoDocumento": 1,
+                                                                "identificacion": "1007779304",
+                                                                "idRol": 1
                                                             }
                                                             """
                                                     )
@@ -318,6 +409,7 @@ public class RouterRest {
         return route(GET("/api/v1/usuarios/{id}"), handler::listenGetPersonaById)
                 .andRoute(POST("/api/v1/usuarios"), handler::listenSavePersona)
                 .andRoute(PUT("/api/v1/usuarios"), handler::listenUpdatePersona)
-                .and(route(GET("/api/v1/usuarios"), handler::listenGetAllPersonas));
+                .andRoute(GET("/api/v1/usuarios/identificacion/{identificacion}"), handler::listenGetPersonaByIdentificacion)
+                .andRoute(GET("/api/v1/usuarios"), handler::listenGetAllPersonas);
     }
 }

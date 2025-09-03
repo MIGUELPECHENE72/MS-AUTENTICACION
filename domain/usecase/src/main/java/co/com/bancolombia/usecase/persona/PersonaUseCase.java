@@ -33,4 +33,8 @@ public class PersonaUseCase {
         return personaRepository.findById(id);
     }
 
+    public Mono<Persona> getByIdentificacion(String id){
+        return personaRepository.findByIdentificacion(id);
+    }
+
 }

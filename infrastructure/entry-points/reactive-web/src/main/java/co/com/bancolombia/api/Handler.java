@@ -5,10 +5,11 @@ import co.com.bancolombia.api.dto.EditPersonaDTO;
 import co.com.bancolombia.api.dto.PersonaDTO;
 import co.com.bancolombia.api.mapper.PersonaDTOMapper;
 import co.com.bancolombia.api.util.RequestValidator;
+import co.com.bancolombia.api.util.exception.ResourceNotFoundException;
 import co.com.bancolombia.usecase.persona.PersonaUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.MediaType;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -34,17 +35,32 @@ public class Handler {
 
         return personaUseCase.getById(id)
                 .flatMap(persona -> ServerResponse.ok()
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
                         .bodyValue(personaDTOMapper.toResponse(persona))
                 )
-                .switchIfEmpty(ServerResponse.notFound().build()); // Si no se encuentra la persona, devolver un 404
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("No se ha encontrado una persona con el id: " + id)));
 
+    }
+
+    public Mono<ServerResponse> listenGetPersonaByIdentificacion(ServerRequest serverRequest) {
+
+        String identificacion = serverRequest.pathVariable("identificacion");
+
+        return personaUseCase.getByIdentificacion(identificacion)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("No se encontraron personas con la identificación: " + identificacion)))
+                .flatMap(persona -> ServerResponse.ok()
+                        .contentType(APPLICATION_JSON)
+                        .bodyValue(personaDTOMapper.toResponse(persona))
+                );
     }
 
     public Mono<ServerResponse> listenGetAllPersonas(ServerRequest serverRequest) {
         return ServerResponse.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(personaUseCase.getAll(),PersonaDTO.class);
+                .contentType(APPLICATION_JSON)
+                .body(personaUseCase.getAll()
+                        .map(persona -> personaDTOMapper.toResponse(persona)),
+                        PersonaDTO.class
+                );
     }
 
     public Mono<ServerResponse> listenSavePersona(ServerRequest serverRequest) {
@@ -57,11 +73,10 @@ public class Handler {
                                         .transform(transactionalOperator::transactional)
                                 )
                                 .flatMap(savedPersona -> ServerResponse.ok()
-                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .contentType(APPLICATION_JSON)
                                             .bodyValue(personaDTOMapper.toResponse(savedPersona))
                                 )
                 )
-                .onErrorResume(this::handleError)
                 .doOnTerminate(() -> log.info("*****Finalizó el proceso de creación de la persona."));
     }
 
@@ -75,19 +90,11 @@ public class Handler {
                                         .transform(transactionalOperator::transactional)
                                 )
                                 .flatMap(savedPersona -> ServerResponse.ok()
-                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .contentType(APPLICATION_JSON)
                                             .bodyValue(personaDTOMapper.toResponse(savedPersona))
                                 )
                 )
-                .onErrorResume(this::handleError)
                 .doOnTerminate(() -> log.info("*****Finalizó el proceso de actualización de la persona."));
     }
 
-    // Método centralizado para manejar errores
-    private Mono<ServerResponse> handleError(Throwable e) {
-        log.error("*****Ha ocurrido un error de validación: {}", e.getMessage(), e);
-        return ServerResponse.badRequest()
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue("Error de validación: " + e.getMessage());
-    }
 }

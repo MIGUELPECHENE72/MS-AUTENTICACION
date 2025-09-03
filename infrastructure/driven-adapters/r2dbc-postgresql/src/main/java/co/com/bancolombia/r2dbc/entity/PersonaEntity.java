@@ -1,6 +1,7 @@
 package co.com.bancolombia.r2dbc.entity;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,5 +34,15 @@ public class PersonaEntity {
     private String correoElectronico;
 
     private BigDecimal salarioBase;
+
+    @Column("id_tipo_documento")
+    private Integer idTipoDocumento;
+
+    private String identificacion;
+
+    @Column("id_rol")
+    private Integer idRol;
+
+    private String password;
 
 }

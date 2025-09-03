@@ -38,4 +38,13 @@ public class EditPersonaDTO{
     @DecimalMax(value = "15000001", inclusive = false, message = "El salario base debe ser menor o igual a 15000000")
     private BigDecimal salarioBase;
 
+    @NotNull(message = "El tipo de documento es obligatorio")
+    private Integer idTipoDocumento;
+
+    @NotBlank(message = "La identificacion es obligatoria")
+    private String identificacion;
+
+    @NotNull(message = "El rol es obligatorio")
+    private Integer idRol;
+
 }

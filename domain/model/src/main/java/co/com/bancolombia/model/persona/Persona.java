@@ -28,4 +28,12 @@ public class Persona {
 
     private BigDecimal salarioBase;
 
+    private Integer idTipoDocumento;
+
+    private String identificacion;
+
+    private Integer idRol;
+
+    private String password;
+
 }

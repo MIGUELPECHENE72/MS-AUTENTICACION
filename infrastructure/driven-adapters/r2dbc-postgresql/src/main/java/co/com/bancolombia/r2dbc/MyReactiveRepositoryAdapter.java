@@ -28,4 +28,9 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
     public Mono<Boolean> existsByCorreoElectronico(String correoElectronico) {
         return repository.existsByCorreoElectronico(correoElectronico);
     }
+
+    @Override
+    public Mono<Persona> findByIdentificacion(String identificacion) {
+        return repository.findByIdentificacion(identificacion);
+    }
 }

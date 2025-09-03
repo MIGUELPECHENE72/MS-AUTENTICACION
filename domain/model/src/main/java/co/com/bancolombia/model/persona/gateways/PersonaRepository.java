@@ -14,4 +14,6 @@ public interface PersonaRepository {
 
     Mono<Boolean> existsByCorreoElectronico(String correoElectronico);
 
+    Mono<Persona> findByIdentificacion(String identificacion);
+
 }
