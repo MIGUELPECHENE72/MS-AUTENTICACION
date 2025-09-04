@@ -13,4 +13,6 @@ public interface MyReactiveRepository extends ReactiveCrudRepository<PersonaEnti
 
     Mono<Persona> findByIdentificacion(String identificacion);
 
+    Mono<Persona> findByCorreoElectronico(String correoElectronico);
+
 }

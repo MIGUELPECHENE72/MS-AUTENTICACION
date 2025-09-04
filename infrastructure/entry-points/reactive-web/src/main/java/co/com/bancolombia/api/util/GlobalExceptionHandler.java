@@ -9,12 +9,14 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebExceptionHandler;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
+import java.util.NoSuchElementException;
 
 @Log4j2
 @Component
@@ -29,13 +31,15 @@ public class GlobalExceptionHandler implements WebExceptionHandler {
         log.error("Excepción capturada: {}", ex.getMessage(),ex);
         HttpStatus status;
 
-        if(ex instanceof ResourceNotFoundException){
+        if(ex instanceof ResourceNotFoundException || ex instanceof NoSuchElementException){
             status = HttpStatus.NOT_FOUND;
         } else if (ex instanceof ValidationException) {
             status = HttpStatus.BAD_REQUEST;
         } else if (ex instanceof DuplicateRecordException || ex instanceof IllegalArgumentException) {
             status = HttpStatus.CONFLICT;
-        } else {
+        } else if (ex  instanceof SecurityException){
+            status = HttpStatus.UNAUTHORIZED;
+        }else {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 

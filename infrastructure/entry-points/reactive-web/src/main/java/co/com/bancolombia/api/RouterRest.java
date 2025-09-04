@@ -2,6 +2,7 @@ package co.com.bancolombia.api;
 
 import co.com.bancolombia.api.dto.CreatePersonaDTO;
 import co.com.bancolombia.api.dto.EditPersonaDTO;
+import co.com.bancolombia.api.dto.LoginDTO;
 import co.com.bancolombia.api.dto.PersonaDTO;
 import co.com.bancolombia.api.util.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -403,13 +404,109 @@ public class RouterRest {
                                     @ApiResponse(responseCode = "400", description = "Error de validación")
                             }
                     )
-            )
+            ),
+            @RouterOperation(
+                    path = "/api/v1/login",
+                    produces = { "application/json" },
+                    method = RequestMethod.POST,
+                    beanClass = Handler.class,
+                    beanMethod = "login",
+                    operation = @Operation(
+                            operationId = "login",
+                            summary = "login",
+                            tags = { "login" },
+                            requestBody = @RequestBody(
+                                    description = "Datos necesarios para hacer login",
+                                    required = true,
+                                    content = @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = LoginDTO.class),
+                                            examples = @ExampleObject(
+                                                    name = "Ejemplo de body",
+                                                    value = """
+                                                    {
+                                                        "email": "miguelpechene72@gmail.com",
+                                                        "password": "user4ppCrediY4"
+                                                    }
+                                                    """
+                                            )
+                                    )
+                            ),
+                            responses = {
+                                    @ApiResponse(
+                                            responseCode = "200",
+                                            description = "Solicitud exitosa",
+                                            content = @Content(
+                                                    mediaType = "application/json",
+                                                    schema = @Schema(implementation = PersonaDTO.class),
+                                                    examples = @ExampleObject(
+                                                            value = """
+                                                            {
+                                                                "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJNSUdVRUwgQU5HRUwiLCJyb2xlcyI6WyJBRE1JTklTVFJBRE9SIl0sImlhdCI6MTc1NjkyOTAwNSwiZXhwIjoxNzU2OTMyNjA1fQ.BoHnCJlYLAi47qx6ckW5pqH15h8Wn2B2Ivmxi8iXPfA"
+                                                            }
+                                                            """
+                                                    )
+                                            )
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "404",
+                                            description = "Solicitud no encontrada",
+                                            content = @Content(
+                                                mediaType = "application/json",
+                                                schema = @Schema(implementation = ErrorResponse.class),
+                                                examples = @ExampleObject(
+                                                    value = """
+                                                     {
+                                                        "errorCode": "Not Found",
+                                                        "message": "No se ha encontrado la persona"
+                                                     }
+                                                     """
+                                                )
+                                            )
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "400",
+                                            description = "Error de validación",
+                                            content = @Content(
+                                                    mediaType = "application/json",
+                                                    schema = @Schema(implementation = ErrorResponse.class),
+                                                    examples = @ExampleObject(
+                                                            value = """
+                                                            {
+                                                                "errorCode": "Bad Request",
+                                                                "message": "El password es obligatorio"
+                                                            }
+                                                            """
+                                                    )
+                                            )
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "401",
+                                            description = "No autorizado"
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "403",
+                                            description = "Acceso denegado",
+                                            content = @Content(
+                                                    mediaType = "text/plain",
+                                                    examples = @ExampleObject(
+                                                            value = """
+                                                            Access Denied
+                                                            """
+                                                    )
+                                            )
+                                    )
+                            }
+                    )
+            ),
     })
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
         return route(GET("/api/v1/usuarios/{id}"), handler::listenGetPersonaById)
                 .andRoute(POST("/api/v1/usuarios"), handler::listenSavePersona)
                 .andRoute(PUT("/api/v1/usuarios"), handler::listenUpdatePersona)
-                .andRoute(GET("/api/v1/usuarios/identificacion/{identificacion}"), handler::listenGetPersonaByIdentificacion)
-                .andRoute(GET("/api/v1/usuarios"), handler::listenGetAllPersonas);
+                .andRoute(GET("/api/v1/usuarios/identificacion/{identificacion}"),
+                        handler::listenGetPersonaByIdentificacion)
+                .andRoute(GET("/api/v1/usuarios"), handler::listenGetAllPersonas)
+                .andRoute(POST("/api/v1/login"), handler::login);
     }
 }

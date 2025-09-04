@@ -1,12 +1,12 @@
 package co.com.bancolombia.api;
 
-import co.com.bancolombia.api.dto.CreatePersonaDTO;
-import co.com.bancolombia.api.dto.EditPersonaDTO;
-import co.com.bancolombia.api.dto.PersonaDTO;
+import co.com.bancolombia.api.dto.*;
 import co.com.bancolombia.api.mapper.PersonaDTOMapper;
+import co.com.bancolombia.api.security.JwtTokenProvider;
 import co.com.bancolombia.api.util.RequestValidator;
 import co.com.bancolombia.api.util.exception.ResourceNotFoundException;
 import co.com.bancolombia.usecase.persona.PersonaUseCase;
+import co.com.bancolombia.usecase.rol.RolUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -16,6 +16,8 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Log4j2
 @Component
 @RequiredArgsConstructor
@@ -23,11 +25,15 @@ public class Handler {
 
     private final PersonaUseCase personaUseCase;
 
+    private final RolUseCase rolUseCase;
+
     private final PersonaDTOMapper personaDTOMapper;
 
     private final RequestValidator requestValidator;
 
     private final TransactionalOperator transactionalOperator;
+
+    private final JwtTokenProvider jwtTokenProvider;
 
     public Mono<ServerResponse> listenGetPersonaById(ServerRequest serverRequest) {
 
@@ -67,7 +73,7 @@ public class Handler {
         return serverRequest.bodyToMono(CreatePersonaDTO.class)
                 .doOnSubscribe(subscription -> log.info("******Inicia llamado a crear persona"))
                 .flatMap(createPersonaDTO ->
-                        requestValidator.validadorPersona(createPersonaDTO)
+                        requestValidator.validador(createPersonaDTO)
                                 .flatMap(validatedDTO -> personaUseCase.create(
                                         personaDTOMapper.toModel(validatedDTO))
                                         .transform(transactionalOperator::transactional)
@@ -83,10 +89,10 @@ public class Handler {
     public Mono<ServerResponse> listenUpdatePersona(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(EditPersonaDTO.class)
                 .doOnSubscribe(subscription -> log.info("******Inicia llamado a actualizar persona"))
-                .flatMap(createPersonaDTO ->
-                        requestValidator.validadorPersona(createPersonaDTO)
-                                .flatMap(editPersonaDTO -> personaUseCase.update(
-                                        personaDTOMapper.toModel(editPersonaDTO))
+                .flatMap(editPersonaDTO ->
+                        requestValidator.validador(editPersonaDTO)
+                                .flatMap(validatedDTO -> personaUseCase.update(
+                                        personaDTOMapper.toModel(validatedDTO))
                                         .transform(transactionalOperator::transactional)
                                 )
                                 .flatMap(savedPersona -> ServerResponse.ok()
@@ -95,6 +101,27 @@ public class Handler {
                                 )
                 )
                 .doOnTerminate(() -> log.info("*****Finalizó el proceso de actualización de la persona."));
+    }
+
+    public Mono<ServerResponse> login(ServerRequest serverRequest) {
+
+        return serverRequest.bodyToMono(LoginDTO.class)
+                .doOnSubscribe(subscription -> log.info("********Inicia el proceso de logueo."))
+                .flatMap(loginDTO ->
+                    requestValidator.validador(loginDTO)
+                    .flatMap(validatedDTO ->
+                        personaUseCase.logueo(validatedDTO.getEmail(), validatedDTO.getPassword())
+                            .flatMap(persona -> rolUseCase.getById(persona.getIdRol())
+                                            .flatMap(rol -> ServerResponse.ok()
+                                                    .contentType(APPLICATION_JSON)
+                                                    .bodyValue(new TokenDTO(
+                                                            jwtTokenProvider.createToken(
+                                                                    persona, List.of("ROLE_"+rol.getNombre())
+                                                            ))))))
+
+                )
+                .doOnTerminate(() -> log.info("*****Finalizó el proceso de logueo."));
+
     }
 
 }

@@ -16,4 +16,6 @@ public interface PersonaRepository {
 
     Mono<Persona> findByIdentificacion(String identificacion);
 
+    Mono<Persona> findByCorreoElectronico(String correoElectronico);
+
 }

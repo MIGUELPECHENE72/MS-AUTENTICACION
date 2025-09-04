@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.NoSuchElementException;
+
 @RequiredArgsConstructor
 public class PersonaUseCase {
 
@@ -35,6 +37,22 @@ public class PersonaUseCase {
 
     public Mono<Persona> getByIdentificacion(String id){
         return personaRepository.findByIdentificacion(id);
+    }
+
+    public Mono<Persona> getByCorreoElectrinico(String correoElectronico){
+        return personaRepository.findByCorreoElectronico(correoElectronico)
+                .switchIfEmpty(Mono.error(new NoSuchElementException("No se ha encontrado la persona")));
+    }
+
+    public Mono<Persona> logueo(String email, String password){
+        return getByCorreoElectrinico(email)
+                .flatMap(persona -> {
+                    if(persona.getCorreoElectronico().equals(email) && persona.getPassword().equals(password)){
+                        return Mono.just(persona);
+                    }else {
+                        return Mono.error(new SecurityException("Credenciales invalidas."));
+                    }
+                });
     }
 
 }

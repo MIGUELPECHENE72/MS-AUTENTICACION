@@ -16,8 +16,7 @@ public class RequestValidator {
 
     private final Validator validator;
 
-
-    public <T> Mono<T> validadorPersona(T dto) {
+    public <T> Mono<T> validador(T dto) {
         return Mono.fromCallable(() -> {
 
             var errors = new BeanPropertyBindingResult(dto, dto.getClass().getName());

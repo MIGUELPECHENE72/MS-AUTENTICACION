@@ -12,6 +12,16 @@
 				{
 					"name": "getById",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJNSUdVRUwgQU5HRUwiLCJyb2xlcyI6WyJBRE1JTklTVFJBRE9SIl0sImlhdCI6MTc1NjkyOTc3MiwiZXhwIjoxNzU2OTMzMzcyfQ.L-_it9vLTUrGjYY-aNAbbSpAiVKAM608oVtOQa77NGk",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -31,8 +41,49 @@
 					"response": []
 				},
 				{
+					"name": "getByIdentificacion",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJNSUdVRUwgQU5HRUwiLCJyb2xlcyI6WyJBRE1JTklTVFJBRE9SIl0sImlhdCI6MTc1NjkyOTc3MiwiZXhwIjoxNzU2OTMzMzcyfQ.L-_it9vLTUrGjYY-aNAbbSpAiVKAM608oVtOQa77NGk",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/api/v1/usuarios/identificacion/1007779304",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"usuarios",
+								"identificacion",
+								"1007779304"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "create",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJKVUFOIE1JR1VFTCIsInJvbGVzIjpbIlJPTEVfQ0xJRU5URSJdLCJpYXQiOjE3NTY5NTA0ODMsImV4cCI6MTc1Njk1NDA4M30.Ez7ghdF7BLvpCAMX5CezBKef9Y535bsStm6SVQmeEVs",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -54,6 +105,35 @@
 								"api",
 								"v1",
 								"usuarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"miguelpechene71@gmail.com\",\n  \"password\": \"user4ppCrediY4\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/login",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"login"
 							]
 						}
 					},
