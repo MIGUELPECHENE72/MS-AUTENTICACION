@@ -12,4 +12,10 @@ public interface PersonaRepository {
 
     Mono<Persona> findById(Integer id);
 
+    Mono<Boolean> existsByCorreoElectronico(String correoElectronico);
+
+    Mono<Persona> findByIdentificacion(String identificacion);
+
+    Mono<Persona> findByCorreoElectronico(String correoElectronico);
+
 }

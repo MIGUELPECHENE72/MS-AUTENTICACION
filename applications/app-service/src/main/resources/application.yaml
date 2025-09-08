@@ -28,5 +28,18 @@ adapters:
     schema: "crediya"
     username: "postgres"
     password: "postgres"
+  transaction:
+    reactive:
+      enabled: true
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+jwt:
+  tk:
+    key: "jWdLDCLzz51gKYlojoRF5dE0S1KgNP1rqj4Zaau6Rwg="
+    expiration: 3600000

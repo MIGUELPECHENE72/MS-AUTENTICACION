@@ -6,6 +6,8 @@ import io.r2dbc.postgresql.PostgresqlConnectionConfiguration;
 import io.r2dbc.postgresql.PostgresqlConnectionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.r2dbc.connection.R2dbcTransactionManager;
+import org.springframework.transaction.ReactiveTransactionManager;
 
 import java.time.Duration;
 
@@ -39,4 +41,10 @@ public class PostgreSQLConnectionPool {
 
 		return new ConnectionPool(poolConfiguration);
 	}
+
+    // Bean para manejar transacciones reactivas
+    @Bean
+    public ReactiveTransactionManager transactionManager(ConnectionPool connectionPool) {
+        return new R2dbcTransactionManager(connectionPool);
+    }
 }

@@ -1,5 +1,6 @@
 package co.com.bancolombia.api.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record PersonaDTO(Integer id,
@@ -9,5 +10,8 @@ public record PersonaDTO(Integer id,
                          String direccion,
                          String telefono,
                          String correoElectronico,
-                         Long salarioBase) {
+                         BigDecimal salarioBase,
+                         Integer idTipoDocumento,
+                         String identificacion,
+                         Integer idRol) {
 }
