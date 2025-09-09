@@ -39,15 +39,15 @@ public class PersonaUseCase {
         return personaRepository.findByIdentificacion(id);
     }
 
-    public Mono<Persona> getByCorreoElectrinico(String correoElectronico){
+    public Mono<Persona> getByCorreoElectronico(String correoElectronico){
         return personaRepository.findByCorreoElectronico(correoElectronico)
                 .switchIfEmpty(Mono.error(new NoSuchElementException("No se ha encontrado la persona")));
     }
 
     public Mono<Persona> logueo(String email, String password){
-        return getByCorreoElectrinico(email)
+        return getByCorreoElectronico(email)
                 .flatMap(persona -> {
-                    if(persona.getCorreoElectronico().equals(email) && persona.getPassword().equals(password)){
+                    if(persona.getPassword().equals(password)){
                         return Mono.just(persona);
                     }else {
                         return Mono.error(new SecurityException("Credenciales invalidas."));

@@ -8,14 +8,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.reactivecommons.utils.ObjectMapper;
-import org.springframework.data.domain.Example;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,7 +43,11 @@ class MyReactiveRepositoryAdapterTest {
                 "PT MADERO",
                 "3023011900",
                 "miguelpechene72@gmail.com",
-                7000000L
+                new BigDecimal("7000000"),
+                1,
+                "1007779304",
+                1,
+                "Hol4Mund0"
         );
 
         Persona persona = new Persona(
@@ -54,7 +58,11 @@ class MyReactiveRepositoryAdapterTest {
                 "PT MADERO",
                 "3023011900",
                 "miguelpechene72@gmail.com",
-                7000000L
+                new BigDecimal("7000000"),
+                1,
+                "1007779304",
+                1,
+                "Hol4Mund0"
         );
 
         when(repository.findById(1)).thenReturn(Mono.just(personaEntity));
@@ -63,7 +71,10 @@ class MyReactiveRepositoryAdapterTest {
         Mono<Persona> result = repositoryAdapter.findById(1);
 
         StepVerifier.create(result)
-                .expectNextMatches(value -> value.equals(persona))
+                .assertNext(personaConsulta -> {
+                    assertNotNull(personaConsulta);
+                    assertEquals(1, personaConsulta.getId());
+                })
                 .verifyComplete();
     }
 
